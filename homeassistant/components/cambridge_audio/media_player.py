@@ -27,9 +27,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     ATTR_AIRABLE_ID,
-    ATTR_AIRABLE_NAME,
-    ATTR_RADIO_NAME,
     ATTR_RADIO_URL,
+    ATTR_STATION_NAME,
     SERVICE_PLAY_AIRABLE,
     SERVICE_PLAY_RADIO,
 )
@@ -72,7 +71,7 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_PLAY_AIRABLE,
         {
-            vol.Required(ATTR_AIRABLE_NAME): str,
+            vol.Required(ATTR_STATION_NAME): str,
             vol.Required(ATTR_AIRABLE_ID): cv.positive_int,
         },
         "play_airable",
@@ -80,7 +79,7 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_PLAY_RADIO,
         {
-            vol.Required(ATTR_RADIO_NAME): str,
+            vol.Required(ATTR_STATION_NAME): str,
             vol.Required(ATTR_RADIO_URL): str,
         },
         "play_radio",
@@ -315,13 +314,11 @@ class CambridgeAudioDevice(CambridgeAudioEntity, MediaPlayerEntity):
         await self.client.set_repeat(repeat_mode)
 
     @command
-    async def play_airable(
-        self, airable_radio_name: str, airable_radio_id: int
-    ) -> None:
+    async def play_airable(self, station_name: str, airable_radio_id: int) -> None:
         """Play airable radio on Cambridge Audio device."""
-        await self.client.play_radio_airable(airable_radio_name, airable_radio_id)
+        await self.client.play_radio_airable(station_name, airable_radio_id)
 
     @command
-    async def play_radio(self, radio_name: str, radio_url: str) -> None:
+    async def play_radio(self, station_name: str, radio_url: str) -> None:
         """Play radio on Cambridge Audio device."""
-        await self.client.play_radio_url(radio_name, radio_url)
+        await self.client.play_radio_url(station_name, radio_url)

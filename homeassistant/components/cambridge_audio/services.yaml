@@ -10,8 +10,8 @@ play_airable:
           min: 0
           max: 9999
           mode: box
-    airable_radio_name:
-      required: true
+    station_name:
+      default: "Radio"
       selector:
         text:
 
@@ -24,7 +24,7 @@ play_radio:
       required: true
       selector:
         text:
-    radio_name:
-      required: true
+    station_name:
+      default: "Radio"
       selector:
         text:

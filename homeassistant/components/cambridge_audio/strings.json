@@ -44,8 +44,8 @@
           "name": "Radio ID",
           "description": "The airable Radio ID."
         },
-        "airable_radio_name": {
-          "name": "Radio Name",
+        "station_name": {
+          "name": "Station name",
           "description": "The airable radio name."
         }
       }
@@ -54,8 +54,8 @@
       "name": "Play Radio",
       "description": "Plays a custom radio URL.",
       "fields": {
-        "radio_name": {
-          "name": "Radio Name",
+        "station_name": {
+          "name": "Station name",
           "description": "The radio name."
         },
         "radio_url": {
