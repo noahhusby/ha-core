@@ -10,6 +10,7 @@ from aiostreammagic import (
     StreamMagicClient,
     TransportControl,
 )
+import voluptuous as vol
 
 from homeassistant.components.media_player import (
     MediaPlayerDeviceClass,
@@ -21,8 +22,17 @@ from homeassistant.components.media_player import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .const import (
+    ATTR_AIRABLE_ID,
+    ATTR_AIRABLE_NAME,
+    ATTR_RADIO_NAME,
+    ATTR_RADIO_URL,
+    SERVICE_PLAY_AIRABLE,
+    SERVICE_PLAY_RADIO,
+)
 from .entity import CambridgeAudioEntity, command
 
 BASE_FEATURES = (
@@ -57,6 +67,24 @@ async def async_setup_entry(
     """Set up Cambridge Audio device based on a config entry."""
     client: StreamMagicClient = entry.runtime_data
     async_add_entities([CambridgeAudioDevice(client)])
+
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_PLAY_AIRABLE,
+        {
+            vol.Required(ATTR_AIRABLE_NAME): str,
+            vol.Required(ATTR_AIRABLE_ID): cv.positive_int,
+        },
+        "play_airable",
+    )
+    platform.async_register_entity_service(
+        SERVICE_PLAY_RADIO,
+        {
+            vol.Required(ATTR_RADIO_NAME): str,
+            vol.Required(ATTR_RADIO_URL): str,
+        },
+        "play_radio",
+    )
 
 
 class CambridgeAudioDevice(CambridgeAudioEntity, MediaPlayerEntity):
@@ -285,3 +313,15 @@ class CambridgeAudioDevice(CambridgeAudioEntity, MediaPlayerEntity):
         if repeat in {RepeatMode.ALL, RepeatMode.ONE}:
             repeat_mode = CambridgeRepeatMode.ALL
         await self.client.set_repeat(repeat_mode)
+
+    @command
+    async def play_airable(
+        self, airable_radio_name: str, airable_radio_id: int
+    ) -> None:
+        """Play airable radio on Cambridge Audio device."""
+        await self.client.play_radio_airable(airable_radio_name, airable_radio_id)
+
+    @command
+    async def play_radio(self, radio_name: str, radio_url: str) -> None:
+        """Play radio on Cambridge Audio device."""
+        await self.client.play_radio_url(radio_name, radio_url)

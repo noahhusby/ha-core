@@ -34,5 +34,35 @@
         }
       }
     }
+  },
+  "services": {
+    "play_airable": {
+      "name": "Play Airable",
+      "description": "Plays a custom airable radio station.",
+      "fields": {
+        "airable_radio_id": {
+          "name": "Radio ID",
+          "description": "The airable Radio ID."
+        },
+        "airable_radio_name": {
+          "name": "Radio Name",
+          "description": "The airable radio name."
+        }
+      }
+    },
+    "play_radio": {
+      "name": "Play Radio",
+      "description": "Plays a custom radio URL.",
+      "fields": {
+        "radio_name": {
+          "name": "Radio Name",
+          "description": "The radio name."
+        },
+        "radio_url": {
+          "name": "Radio URL",
+          "description": "The radio url."
+        }
+      }
+    }
   }
 }

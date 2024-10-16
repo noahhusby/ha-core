@@ -1,0 +1,30 @@
+play_airable:
+  target:
+    device:
+      integration: cambridge_audio
+  fields:
+    airable_radio_id:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 9999
+          mode: box
+    airable_radio_name:
+      required: true
+      selector:
+        text:
+
+play_radio:
+  target:
+    device:
+      integration: cambridge_audio
+  fields:
+    radio_url:
+      required: true
+      selector:
+        text:
+    radio_name:
+      required: true
+      selector:
+        text:
