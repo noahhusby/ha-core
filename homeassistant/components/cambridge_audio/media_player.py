@@ -18,12 +18,13 @@ from homeassistant.components.media_player import (
     MediaPlayerEntityFeature,
     MediaPlayerState,
     MediaType,
-    RepeatMode,
+    RepeatMode, BrowseMedia,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from . import media_browser
 
 from .const import (
     ATTR_AIRABLE_ID,
@@ -35,7 +36,8 @@ from .const import (
 from .entity import CambridgeAudioEntity, command
 
 BASE_FEATURES = (
-    MediaPlayerEntityFeature.SELECT_SOURCE
+    MediaPlayerEntityFeature.BROWSE_MEDIA
+    | MediaPlayerEntityFeature.SELECT_SOURCE
     | MediaPlayerEntityFeature.TURN_OFF
     | MediaPlayerEntityFeature.TURN_ON
 )
@@ -322,3 +324,15 @@ class CambridgeAudioDevice(CambridgeAudioEntity, MediaPlayerEntity):
     async def play_radio(self, station_name: str, radio_url: str) -> None:
         """Play radio on Cambridge Audio device."""
         await self.client.play_radio_url(station_name, radio_url)
+
+    async def async_browse_media(
+        self,
+        media_content_type: MediaType | str | None = None,
+        media_content_id: str | None = None,
+    ) -> BrowseMedia:
+        """Implement the media browsing helper."""
+        return await media_browser.async_browse_media(
+            self.hass,
+            media_content_id,
+            media_content_type
+        )
