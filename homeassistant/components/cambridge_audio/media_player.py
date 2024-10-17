@@ -13,19 +13,20 @@ from aiostreammagic import (
 import voluptuous as vol
 
 from homeassistant.components.media_player import (
+    BrowseMedia,
     MediaPlayerDeviceClass,
     MediaPlayerEntity,
     MediaPlayerEntityFeature,
     MediaPlayerState,
     MediaType,
-    RepeatMode, BrowseMedia,
+    RepeatMode,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from . import media_browser
 
+from . import media_browser
 from .const import (
     ATTR_AIRABLE_ID,
     ATTR_RADIO_URL,
@@ -332,7 +333,5 @@ class CambridgeAudioDevice(CambridgeAudioEntity, MediaPlayerEntity):
     ) -> BrowseMedia:
         """Implement the media browsing helper."""
         return await media_browser.async_browse_media(
-            self.hass,
-            media_content_id,
-            media_content_type
+            self.hass, media_content_id, media_content_type
         )

@@ -1,14 +1,13 @@
 """Support for media browsing."""
-from typing_extensions import Optional
 
 from homeassistant.components.media_player import BrowseMedia, MediaClass
 from homeassistant.core import HomeAssistant
 
 
 async def async_browse_media(
-        hass: HomeAssistant,
-        media_content_id: Optional[str],
-        media_content_type: Optional[str],
+    hass: HomeAssistant,
+    media_content_id: str | None,
+    media_content_type: str | None,
 ) -> BrowseMedia:
     """Browse media."""
     if media_content_id is None:
@@ -16,8 +15,9 @@ async def async_browse_media(
             hass,
         )
 
+
 async def root_payload(
-        hass: HomeAssistant,
+    hass: HomeAssistant,
 ) -> BrowseMedia:
     return BrowseMedia(
         title="Cambridge Audio",
