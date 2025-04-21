@@ -1,0 +1,7 @@
+{
+  "services": {
+    "set_loudness": {
+      "service": "mdi:bullhorn"
+    }
+  }
+}

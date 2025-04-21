@@ -47,5 +47,21 @@
     "command_error": {
       "message": "Error executing {function_name} on entity {entity_id}"
     }
+  },
+  "services": {
+    "set_loudness": {
+      "name": "Set loudness",
+      "description": "Loudness setting for the zone",
+      "fields": {
+        "entity_id": {
+          "name": "Russound zone",
+          "description": "Select the zones you want to change."
+        },
+        "enabled": {
+          "name": "Enabled",
+          "description": "Whether loudness should be enabled for the selected zones."
+        }
+      }
+    }
   }
 }

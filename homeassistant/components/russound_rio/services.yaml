@@ -1,0 +1,13 @@
+set_loudness:
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          integration: russound_rio
+          multiple: true
+          domain: media_player
+    enabled:
+      required: true
+      selector:
+        boolean:

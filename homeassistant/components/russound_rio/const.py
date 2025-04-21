@@ -12,3 +12,5 @@ RUSSOUND_RIO_EXCEPTIONS = (
     TimeoutError,
     asyncio.CancelledError,
 )
+
+ATTR_ENABLED: str = "enabled"
