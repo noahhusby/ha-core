@@ -1,15 +1,26 @@
 """Russound RIO integration services."""
 
+from collections.abc import Callable, Coroutine
+from dataclasses import dataclass
 import re
+from typing import Any, Final
 
 from aiorussound.rio import RussoundClient, ZoneControlSurface
 import voluptuous as vol
 
 from homeassistant.const import ATTR_ENTITY_ID
-from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse, callback
+from homeassistant.core import (
+    EntityServiceResponse,
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+    callback,
+)
 from homeassistant.helpers import config_validation as cv, entity_registry as er
+from homeassistant.helpers.service import async_extract_referenced_entity_ids
+from homeassistant.helpers.typing import VolSchemaType
 
-from ...helpers.service import async_extract_referenced_entity_ids
 from .const import ATTR_ENABLED, DOMAIN
 
 SERVICE_SET_LOUDNESS = "set_loudness"
@@ -23,6 +34,32 @@ SET_LOUDNESS_SCHEMA = vol.All(
     ),
     cv.has_at_least_one_key(ATTR_ENTITY_ID),
 )
+
+
+@dataclass(frozen=True)
+class EntityServiceDescription:
+    """Describe an entity service."""
+
+    name: str
+    method: Callable[
+        [ServiceCall],
+        Coroutine[Any, Any, ServiceResponse | EntityServiceResponse]
+        | ServiceResponse
+        | EntityServiceResponse
+        | None,
+    ]
+    schema: VolSchemaType | None = None
+    supports_response: SupportsResponse = SupportsResponse.NONE
+
+    def async_register(self, hass: HomeAssistant) -> None:
+        """Register the service with the platform."""
+        hass.services.async_register(
+            DOMAIN,
+            self.name,
+            self.method,
+            self.schema,
+            supports_response=self.supports_response,
+        )
 
 
 @callback
@@ -46,6 +83,8 @@ def _async_get_zones_from_call(call: ServiceCall) -> list[ZoneControlSurface]:
         controller_id = int(match.group(1))
         zone_id = int(match.group(2))
         config_entry = call.hass.config_entries.async_get_entry(config_entry_id)
+        if not config_entry:
+            continue
         client: RussoundClient = config_entry.runtime_data
         zones.append(client.controllers[controller_id].zones[zone_id])
     return zones
@@ -59,20 +98,13 @@ async def set_loudness(call: ServiceCall) -> None:
         await zone.set_loudness(enabled)
 
 
-SERVICES = [
-    (
-        SERVICE_SET_LOUDNESS,
-        set_loudness,
-        SET_LOUDNESS_SCHEMA,
-        SupportsResponse.NONE,
-    )
-]
+SERVICES: Final = (
+    EntityServiceDescription(SERVICE_SET_LOUDNESS, set_loudness, SET_LOUDNESS_SCHEMA),
+)
 
 
 def async_setup_services(hass: HomeAssistant) -> None:
     """Set up the Russound RIO services."""
 
-    for name, method, schema, supports_response in SERVICES:
-        hass.services.async_register(
-            DOMAIN, name, method, schema=schema, supports_response=supports_response
-        )
+    for service in SERVICES:
+        service.async_register(hass)
